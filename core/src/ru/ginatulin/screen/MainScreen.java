@@ -8,17 +8,20 @@ import com.badlogic.gdx.math.Vector2;
 import ru.ginatulin.base.BaseScreen;
 
 public class MainScreen extends BaseScreen {
-    private Vector2 touch;
-    private Texture img;
+    private Vector2 antPosition;
+    private Vector2 antDirection;
+    private Vector2 antDist;
+    private Texture ant;
     private TextureRegion background;
-    private Integer ANT_WIDTH = 128;
-    private Integer ANT_HEIGHT = 128;
 
     @Override
     public void show() {
         super.show();
-        touch = new Vector2();
-        img = new Texture("ant2.png");
+        antDirection = new Vector2();
+        antPosition = new Vector2();
+        antDist = new Vector2(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
+
+        ant = new Texture("ant2.png");
         background = new TextureRegion(
                 new Texture("grass.jpg"), 0, 0, 1024, 768);
     }
@@ -28,20 +31,30 @@ public class MainScreen extends BaseScreen {
         super.render(delta);
         batch.begin();
         batch.draw(background, 0, 0);
-        batch.draw(img, touch.x, touch.y);
+        checkPosition();
+        batch.draw(ant, antPosition.x, antPosition.y);
         batch.end();
+    }
+
+    private void checkPosition() {
+        if (antPosition.x != antDist.x || antPosition.y != antDist.y) {
+            antDirection.set(antPosition.x - antDist.x, antPosition.y - antDist.y);
+            antPosition.sub(antDirection.nor());
+        }else {
+            antPosition = antDist;
+        }
     }
 
     @Override
     public void dispose() {
         super.dispose();
         background.getTexture().dispose();
-        img.dispose();
+        ant.dispose();
     }
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        touch.set(screenX - 64, Gdx.graphics.getHeight() - screenY - 64);
+        antDist.set(screenX - 64, Gdx.graphics.getHeight() - screenY - 64);
         return super.touchDown(screenX, screenY, pointer, button);
     }
 }
