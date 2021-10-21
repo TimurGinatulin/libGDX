@@ -1,47 +1,47 @@
 package ru.ginatulin.screen;
 
-import com.badlogic.gdx.Gdx;
+
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
 import ru.ginatulin.base.BaseScreen;
+import ru.ginatulin.math.Rect;
+import ru.ginatulin.sprite.Background;
 
 public class MainScreen extends BaseScreen {
-    private Vector2 touch;
-    private Texture img;
-    private TextureRegion background;
-    private Integer ANT_WIDTH = 128;
-    private Integer ANT_HEIGHT = 128;
+    private Background background;
+    private Texture bg;
 
     @Override
     public void show() {
+        bg = new Texture("textures/bg.png");
+        background = new Background(bg);
         super.show();
-        touch = new Vector2();
-        img = new Texture("ant2.png");
-        background = new TextureRegion(
-                new Texture("grass.jpg"), 0, 0, 1024, 768);
+
     }
 
     @Override
     public void render(float delta) {
         super.render(delta);
         batch.begin();
-        batch.draw(background, 0, 0);
-        batch.draw(img, touch.x, touch.y);
+        background.draw(batch);
         batch.end();
+    }
+
+    @Override
+    public void resize(Rect worldBounds) {
+        super.resize(worldBounds);
+        background.resize(worldBounds);
     }
 
     @Override
     public void dispose() {
         super.dispose();
-        background.getTexture().dispose();
-        img.dispose();
+        bg.dispose();
     }
 
     @Override
-    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        touch.set(screenX - 64, Gdx.graphics.getHeight() - screenY - 64);
-        return super.touchDown(screenX, screenY, pointer, button);
+    public boolean touchDown(Vector2 touch, int pointer, int button) {
+        return super.touchDown(touch, pointer, button);
     }
 }
