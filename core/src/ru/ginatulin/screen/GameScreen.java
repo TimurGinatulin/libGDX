@@ -7,8 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import ru.ginatulin.base.BaseScreen;
 import ru.ginatulin.math.Rect;
 import ru.ginatulin.sprite.Background;
-import ru.ginatulin.sprite.ExitButton;
-import ru.ginatulin.sprite.PlayButton;
+import ru.ginatulin.sprite.MainShip;
 import ru.ginatulin.sprite.Star;
 
 public class GameScreen extends BaseScreen {
@@ -16,6 +15,7 @@ public class GameScreen extends BaseScreen {
     private Background background;
     private Texture bg;
     private Star[] stars;
+    private MainShip mainShip;
     private TextureAtlas atlas;
 
     @Override
@@ -24,6 +24,7 @@ public class GameScreen extends BaseScreen {
         background = new Background(bg);
         atlas = new TextureAtlas("textures/mainAtlas.tpack");
         stars = new Star[STAR_COUNT];
+        mainShip = new MainShip(atlas);
         for (int i = 0; i < STAR_COUNT; i++) {
             stars[i] = new Star(atlas);
         }
@@ -36,7 +37,9 @@ public class GameScreen extends BaseScreen {
         update(delta);
         draw();
     }
+
     private void update(float delta) {
+        mainShip.update(delta);
         for (int i = 0; i < STAR_COUNT; i++) {
             stars[i].update(delta);
         }
@@ -48,11 +51,14 @@ public class GameScreen extends BaseScreen {
         for (int i = 0; i < STAR_COUNT; i++) {
             stars[i].draw(batch);
         }
+        mainShip.draw(batch);
         batch.end();
     }
+
     @Override
     public void resize(Rect worldBounds) {
         background.resize(worldBounds);
+        mainShip.resize(worldBounds);
         for (int i = 0; i < STAR_COUNT; i++) {
             stars[i].resize(worldBounds);
         }
@@ -68,11 +74,25 @@ public class GameScreen extends BaseScreen {
 
     @Override
     public boolean touchDown(Vector2 touch, int pointer, int button) {
+        mainShip.touchDown(touch, pointer, button);
         return super.touchDown(touch, pointer, button);
     }
 
     @Override
     public boolean touchUp(Vector2 touch, int pointer, int button) {
+        mainShip.touchUp(touch, pointer, button);
         return super.touchUp(touch, pointer, button);
+    }
+
+    @Override
+    public boolean keyDown(int keycode) {
+        mainShip.keyDown(keycode);
+        return super.keyDown(keycode);
+    }
+
+    @Override
+    public boolean keyUp(int keycode) {
+        mainShip.keyUp(keycode);
+        return super.keyUp(keycode);
     }
 }
