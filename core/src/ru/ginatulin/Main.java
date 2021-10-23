@@ -8,6 +8,6 @@ public class Main extends Game {
 
     @Override
     public void create() {
-        setScreen(new MainScreen());
+        setScreen(new MainScreen(this));
     }
 }
