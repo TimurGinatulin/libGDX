@@ -1,7 +1,5 @@
 package ru.ginatulin.screen;
 
-
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
@@ -13,33 +11,23 @@ import ru.ginatulin.sprite.ExitButton;
 import ru.ginatulin.sprite.PlayButton;
 import ru.ginatulin.sprite.Star;
 
-public class MainScreen extends BaseScreen {
-    private final Game game;
-    private static final int STAR_COUNT = 256;
+public class GameScreen extends BaseScreen {
+    private static final int STAR_COUNT = 64;
     private Background background;
     private Texture bg;
-    private Star [] stars;
-    private ExitButton exitButton;
-    private PlayButton playButton;
+    private Star[] stars;
     private TextureAtlas atlas;
-
-    public MainScreen(Game game) {
-        this.game = game;
-    }
 
     @Override
     public void show() {
         bg = new Texture("textures/bg.png");
         background = new Background(bg);
-        atlas = new TextureAtlas("textures/menuAtlas.tpack");
+        atlas = new TextureAtlas("textures/mainAtlas.tpack");
         stars = new Star[STAR_COUNT];
         for (int i = 0; i < STAR_COUNT; i++) {
             stars[i] = new Star(atlas);
         }
-        exitButton = new ExitButton(atlas);
-        playButton = new PlayButton(atlas,game);
         super.show();
-
     }
 
     @Override
@@ -48,7 +36,6 @@ public class MainScreen extends BaseScreen {
         update(delta);
         draw();
     }
-
     private void update(float delta) {
         for (int i = 0; i < STAR_COUNT; i++) {
             stars[i].update(delta);
@@ -61,40 +48,31 @@ public class MainScreen extends BaseScreen {
         for (int i = 0; i < STAR_COUNT; i++) {
             stars[i].draw(batch);
         }
-        exitButton.draw(batch);
-        playButton.draw(batch);
         batch.end();
     }
-
     @Override
     public void resize(Rect worldBounds) {
-        super.resize(worldBounds);
         background.resize(worldBounds);
-        exitButton.resize(worldBounds);
-        playButton.resize(worldBounds);
         for (int i = 0; i < STAR_COUNT; i++) {
             stars[i].resize(worldBounds);
         }
+        super.resize(worldBounds);
     }
 
     @Override
     public void dispose() {
-        super.dispose();
         atlas.dispose();
         bg.dispose();
+        super.dispose();
     }
 
     @Override
     public boolean touchDown(Vector2 touch, int pointer, int button) {
-        exitButton.touchDown(touch, pointer, button);
-        playButton.touchDown(touch, pointer, button);
-        return false;
+        return super.touchDown(touch, pointer, button);
     }
 
     @Override
     public boolean touchUp(Vector2 touch, int pointer, int button) {
-        exitButton.touchUp(touch, pointer, button);
-        playButton.touchUp(touch, pointer, button);
-        return false;
+        return super.touchUp(touch, pointer, button);
     }
 }
