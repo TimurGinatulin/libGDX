@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import ru.ginatulin.base.BaseScreen;
 import ru.ginatulin.math.Rect;
+import ru.ginatulin.pool.BulletPool;
 import ru.ginatulin.sprite.Background;
 import ru.ginatulin.sprite.MainShip;
 import ru.ginatulin.sprite.Star;
@@ -17,6 +18,7 @@ public class GameScreen extends BaseScreen {
     private Star[] stars;
     private MainShip mainShip;
     private TextureAtlas atlas;
+    private BulletPool bulletPool;
 
     @Override
     public void show() {
@@ -24,10 +26,12 @@ public class GameScreen extends BaseScreen {
         background = new Background(bg);
         atlas = new TextureAtlas("textures/mainAtlas.tpack");
         stars = new Star[STAR_COUNT];
-        mainShip = new MainShip(atlas);
+        bulletPool = new BulletPool();
+        mainShip = new MainShip(atlas,bulletPool);
         for (int i = 0; i < STAR_COUNT; i++) {
             stars[i] = new Star(atlas);
         }
+
         super.show();
     }
 
@@ -35,19 +39,26 @@ public class GameScreen extends BaseScreen {
     public void render(float delta) {
         super.render(delta);
         update(delta);
+        freeAllDestroyed();
         draw();
     }
 
     private void update(float delta) {
         mainShip.update(delta);
+        bulletPool.updateActiveObject(delta);
         for (int i = 0; i < STAR_COUNT; i++) {
             stars[i].update(delta);
         }
     }
 
+    private void freeAllDestroyed() {
+        bulletPool.freeAllDestroyed();
+    }
+
     private void draw() {
         batch.begin();
         background.draw(batch);
+        bulletPool.drawActiveObject(batch);
         for (int i = 0; i < STAR_COUNT; i++) {
             stars[i].draw(batch);
         }
@@ -69,6 +80,7 @@ public class GameScreen extends BaseScreen {
     public void dispose() {
         atlas.dispose();
         bg.dispose();
+        bulletPool.dispose();
         super.dispose();
     }
 
