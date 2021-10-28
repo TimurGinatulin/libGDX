@@ -2,6 +2,8 @@ package ru.ginatulin.screen;
 
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
@@ -18,10 +20,11 @@ public class MainScreen extends BaseScreen {
     private static final int STAR_COUNT = 256;
     private Background background;
     private Texture bg;
-    private Star [] stars;
+    private Star[] stars;
     private ExitButton exitButton;
     private PlayButton playButton;
     private TextureAtlas atlas;
+    private Music music;
 
     public MainScreen(Game game) {
         this.game = game;
@@ -29,6 +32,8 @@ public class MainScreen extends BaseScreen {
 
     @Override
     public void show() {
+        music = Gdx.audio.newMusic(Gdx.files.internal("sounds/music.mp3"));
+        music.setLooping(true);
         bg = new Texture("textures/bg.png");
         background = new Background(bg);
         atlas = new TextureAtlas("textures/menuAtlas.tpack");
@@ -37,9 +42,9 @@ public class MainScreen extends BaseScreen {
             stars[i] = new Star(atlas);
         }
         exitButton = new ExitButton(atlas);
-        playButton = new PlayButton(atlas,game);
+        playButton = new PlayButton(atlas, game);
+        music.play();
         super.show();
-
     }
 
     @Override
@@ -81,6 +86,7 @@ public class MainScreen extends BaseScreen {
     public void dispose() {
         super.dispose();
         atlas.dispose();
+        music.dispose();
         bg.dispose();
     }
 

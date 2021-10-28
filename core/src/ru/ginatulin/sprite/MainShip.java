@@ -1,6 +1,8 @@
 package ru.ginatulin.sprite;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
@@ -13,23 +15,27 @@ public class MainShip extends Sprite {
     private Rect worldBounds;
     private final float SHIP_HEIGHT = 0.15f;
     private final float BOTTOM_MARGIN = 0.05f;
-    private final int INVALID_POINTER = -1;
     private final Vector2 v;
     private final Vector2 v0;
+
+
+    private final int INVALID_POINTER = -1;
     private boolean isMoveRight = false;
     private boolean isMoveLeft = false;
     private int leftPointer = INVALID_POINTER;
     private int rightPointer = INVALID_POINTER;
-    private int pointer;
+
     private final BulletPool bulletPool;
-    private TextureRegion bulletRegions;
-    private Vector2 bulletV;
-    private float bulletHeight;
-    private int bulletDamage;
+    private final TextureRegion bulletRegions;
+    private final Vector2 bulletV;
+    private final float bulletHeight;
+    private final int bulletDamage;
+    private final Sound shoot;
     private float shootSpeed = 0.5f;
 
     public MainShip(TextureAtlas atlas, BulletPool bulletPool) {
         super(atlas.findRegion("main_ship"), 1, 2, 2);
+        shoot = Gdx.audio.newSound(Gdx.files.internal("sounds/laser.wav"));
         bulletRegions = atlas.findRegion("bulletMainShip");
         v = new Vector2();
         v0 = new Vector2(0.5f, 0);
@@ -42,13 +48,20 @@ public class MainShip extends Sprite {
     @Override
     public void update(float delta) {
         pos.mulAdd(v, delta);
+        autoFire(delta);
         if (getLeft() > worldBounds.getRight())
             setRight(worldBounds.getLeft());
         if (getRight() < worldBounds.getLeft())
             setLeft(worldBounds.getRight());
     }
 
-
+    private void autoFire(float delta) {
+        shootSpeed -= delta;
+        if (shootSpeed < 0) {
+            shoot();
+            shootSpeed = 0.5f;
+        }
+    }
 
     @Override
     public void resize(Rect worldBounds) {
@@ -60,7 +73,6 @@ public class MainShip extends Sprite {
 
     @Override
     public boolean touchDown(Vector2 touch, int pointer, int button) {
-        this.pointer = pointer;
         if (touch.x > 0) {
             if (rightPointer != INVALID_POINTER)
                 return false;
@@ -119,7 +131,7 @@ public class MainShip extends Sprite {
             case Input.Keys.D:
                 isMoveRight = false;
                 if (isMoveLeft)
-                    moveRight();
+                    moveLeft();
                 else
                     stop();
                 break;
@@ -127,7 +139,7 @@ public class MainShip extends Sprite {
             case Input.Keys.A:
                 isMoveLeft = false;
                 if (isMoveRight)
-                    moveLeft();
+                    moveRight();
                 else
                     stop();
                 break;
@@ -151,6 +163,7 @@ public class MainShip extends Sprite {
     }
 
     public void shoot() {
+        shoot.play();
         Bullet bullet = bulletPool.obtain();
         bullet.set(this, bulletRegions, this.pos, bulletV, bulletHeight, worldBounds, bulletDamage);
     }

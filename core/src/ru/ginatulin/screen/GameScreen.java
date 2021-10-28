@@ -13,11 +13,11 @@ import ru.ginatulin.sprite.Star;
 
 public class GameScreen extends BaseScreen {
     private static final int STAR_COUNT = 64;
+    private TextureAtlas atlas;
     private Background background;
     private Texture bg;
     private Star[] stars;
     private MainShip mainShip;
-    private TextureAtlas atlas;
     private BulletPool bulletPool;
 
     @Override
@@ -27,12 +27,13 @@ public class GameScreen extends BaseScreen {
         atlas = new TextureAtlas("textures/mainAtlas.tpack");
         stars = new Star[STAR_COUNT];
         bulletPool = new BulletPool();
-        mainShip = new MainShip(atlas,bulletPool);
+        mainShip = new MainShip(atlas, bulletPool);
         for (int i = 0; i < STAR_COUNT; i++) {
             stars[i] = new Star(atlas);
         }
 
         super.show();
+
     }
 
     @Override
