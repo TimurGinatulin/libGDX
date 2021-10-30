@@ -9,6 +9,7 @@ import ru.ginatulin.math.Rect;
 import ru.ginatulin.pool.BulletPool;
 
 public class EnemyShip extends BaseShip {
+    private boolean makeFirstShoot;
     private Vector2 startingBoost = new Vector2(0f, -0.7f);
 
     public EnemyShip(BulletPool bulletPool, Rect worldBounds) {
@@ -18,6 +19,7 @@ public class EnemyShip extends BaseShip {
         this.v0 = new Vector2();
         this.bulletV = new Vector2();
         this.bulletPosition = new Vector2();
+        this.makeFirstShoot = false;
     }
 
     @Override
@@ -50,5 +52,20 @@ public class EnemyShip extends BaseShip {
         this.hp = hp;
         this.reloadInterval = reloadInterval;
         setHeightProportion(height);
+    }
+
+    @Override
+    protected void autoFire(float delta) {
+        if (getTop() < worldBounds.getTop() && !makeFirstShoot) {
+            shoot();
+            makeFirstShoot = true;
+        }
+        super.autoFire(delta);
+    }
+
+    @Override
+    public void destroy() {
+        super.destroy();
+        makeFirstShoot = false;
     }
 }

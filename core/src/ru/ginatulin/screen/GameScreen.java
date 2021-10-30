@@ -72,7 +72,7 @@ public class GameScreen extends BaseScreen {
         }
         for (Bullet bullet : bulletPool.getActiveObject()) {
             for (EnemyShip enemyShip : enemyPool.getActiveObject()) {
-                if (!enemyShip.isOutside(bullet)) {
+                if (enemyShip.isMe(bullet.pos) && bullet.getOwner() == mainShip) {
                     enemyShip.destroy();
                     explosion.play(0.1f);
                     bullet.destroy();

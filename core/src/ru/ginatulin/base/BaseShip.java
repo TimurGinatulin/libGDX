@@ -23,8 +23,10 @@ public class BaseShip extends Sprite {
     protected Vector2 v0;
 
     protected Rect worldBounds;
-    private float reloadTimer;
-    private final Sound shoot = Gdx.audio.newSound(Gdx.files.internal("sounds/laser.wav"));
+    private float reloadTimer =
+            Float.MAX_VALUE;
+    private final Sound shoot =
+            Gdx.audio.newSound(Gdx.files.internal("sounds/laser.wav"));
     protected float reloadInterval;
 
     public BaseShip() {
@@ -41,12 +43,12 @@ public class BaseShip extends Sprite {
         autoFire(delta);
     }
 
-    private void autoFire(float delta) {
-        reloadTimer += delta;
-        if (reloadTimer >= reloadInterval && getBottom() < worldBounds.getTop()) {
+    protected void autoFire(float delta) {
+        if (this.reloadTimer >= this.reloadInterval) {
             shoot();
             reloadTimer = 0f;
         }
+        reloadTimer += delta;
     }
 
     public void shoot() {
