@@ -11,7 +11,7 @@ import ru.ginatulin.pool.BulletPool;
 public class MainShip extends BaseShip {
     private final float SHIP_HEIGHT = 0.15f;
     private final float BOTTOM_MARGIN = 0.05f;
-    private final float RELOAD_INTERVAL = 0.2f;
+    private final float RELOAD_INTERVAL = 0.3f;
     private final int INVALID_POINTER = -1;
     private boolean isMoveRight = false;
     private boolean isMoveLeft = false;

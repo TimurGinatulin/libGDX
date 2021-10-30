@@ -32,7 +32,6 @@ public class BaseShip extends Sprite {
 
     public BaseShip(TextureRegion region, int rows, int cols, int frames) {
         super(region, rows, cols, frames);
-
         this.hp = 100;
     }
 
@@ -44,7 +43,7 @@ public class BaseShip extends Sprite {
 
     private void autoFire(float delta) {
         reloadTimer += delta;
-        if (reloadTimer >= reloadInterval) {
+        if (reloadTimer >= reloadInterval && getBottom() < worldBounds.getTop()) {
             shoot();
             reloadTimer = 0f;
         }
@@ -55,7 +54,8 @@ public class BaseShip extends Sprite {
         bullet.set(this, bulletRegions, bulletPosition, bulletV, bulletHeight, worldBounds, bulletDamage);
         shoot.play();
     }
-    public void dispose(){
+
+    public void dispose() {
         shoot.dispose();
     }
 

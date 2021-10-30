@@ -9,6 +9,8 @@ import ru.ginatulin.math.Rect;
 import ru.ginatulin.pool.BulletPool;
 
 public class EnemyShip extends BaseShip {
+    private Vector2 startingBoost = new Vector2(0f, -0.7f);
+
     public EnemyShip(BulletPool bulletPool, Rect worldBounds) {
         this.bulletPool = bulletPool;
         this.worldBounds = worldBounds;
@@ -20,14 +22,16 @@ public class EnemyShip extends BaseShip {
 
     @Override
     public void update(float delta) {
+        if (getTop() > worldBounds.getTop())
+            pos.mulAdd(startingBoost, delta);
         super.update(delta);
-        bulletPosition.set(this.pos.x,getBottom());
-        if (getBottom()< worldBounds.getBottom())
+        bulletPosition.set(this.pos.x, getBottom());
+        if (getBottom() < worldBounds.getBottom())
             destroy();
     }
 
     public void set(
-            TextureRegion [] regions,
+            TextureRegion[] regions,
             Vector2 v,
             TextureRegion bulletRegion,
             float bulletHeight,
@@ -36,7 +40,7 @@ public class EnemyShip extends BaseShip {
             int hp,
             float reloadInterval,
             float height
-    ){
+    ) {
         this.regions = regions;
         this.v.set(v);
         this.bulletRegions = bulletRegion;
