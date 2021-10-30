@@ -100,7 +100,7 @@ public class MainScreen extends BaseScreen {
     @Override
     public boolean touchUp(Vector2 touch, int pointer, int button) {
         exitButton.touchUp(touch, pointer, button);
-        playButton.touchUp(touch, pointer, button);
+        playButton.touchUp(touch, pointer, button );
         return false;
     }
 }
