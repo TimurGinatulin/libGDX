@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import ru.ginatulin.base.BaseShip;
 import ru.ginatulin.math.Rect;
 import ru.ginatulin.pool.BulletPool;
+import ru.ginatulin.pool.ExplosionPool;
 
 public class MainShip extends BaseShip {
     private final float SHIP_HEIGHT = 0.15f;
@@ -18,8 +19,9 @@ public class MainShip extends BaseShip {
     private int leftPointer = INVALID_POINTER;
     private int rightPointer = INVALID_POINTER;
 
-    public MainShip(TextureAtlas atlas, BulletPool bulletPool) {
+    public MainShip(TextureAtlas atlas, BulletPool bulletPool, ExplosionPool explosionPool) {
         super(atlas.findRegion("main_ship"), 1, 2, 2);
+        this.explosionPool = explosionPool;
         this.bulletRegions = atlas.findRegion("bulletMainShip");
         this.v = new Vector2();
         this.v0 = new Vector2(0.5f, 0);
@@ -29,12 +31,17 @@ public class MainShip extends BaseShip {
         this.reloadInterval = RELOAD_INTERVAL;
         this.bulletHeight = 0.01f;
         this.bulletDamage = 1;
+        this.hp = 1;
+    }
+
+    public Integer getHP() {
+        return this.hp;
     }
 
     @Override
     public void update(float delta) {
         super.update(delta);
-        bulletPosition.set(this.pos.x,getTop());
+        bulletPosition.set(this.pos.x, getTop());
         if (getLeft() > worldBounds.getRight())
             setRight(worldBounds.getLeft());
         if (getRight() < worldBounds.getLeft())
@@ -139,5 +146,10 @@ public class MainShip extends BaseShip {
     private void stop() {
         v.setZero();
     }
-
+    public boolean isBulletCollision(Bullet bullet) {
+        return !(bullet.getRight() < getLeft() ||
+                bullet.getLeft() > getRight() ||
+                bullet.getBottom() > pos.y ||
+                bullet.getTop() < getBottom());
+    }
 }

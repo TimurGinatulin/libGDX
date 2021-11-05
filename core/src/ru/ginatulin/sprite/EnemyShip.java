@@ -7,25 +7,27 @@ import com.badlogic.gdx.math.Vector2;
 import ru.ginatulin.base.BaseShip;
 import ru.ginatulin.math.Rect;
 import ru.ginatulin.pool.BulletPool;
+import ru.ginatulin.pool.ExplosionPool;
 
 public class EnemyShip extends BaseShip {
-    private boolean makeFirstShoot;
     private Vector2 startingBoost = new Vector2(0f, -0.7f);
 
-    public EnemyShip(BulletPool bulletPool, Rect worldBounds) {
+    public EnemyShip(BulletPool bulletPool, Rect worldBounds, ExplosionPool explosionPool) {
+        this.explosionPool = explosionPool;
         this.bulletPool = bulletPool;
         this.worldBounds = worldBounds;
         this.v = new Vector2();
         this.v0 = new Vector2();
         this.bulletV = new Vector2();
         this.bulletPosition = new Vector2();
-        this.makeFirstShoot = false;
     }
 
     @Override
     public void update(float delta) {
-        if (getTop() > worldBounds.getTop())
+        if (getTop() > worldBounds.getTop()) {
             pos.mulAdd(startingBoost, delta);
+            reloadTimer = reloadInterval * 0.8f;
+        }
         super.update(delta);
         bulletPosition.set(this.pos.x, getBottom());
         if (getBottom() < worldBounds.getBottom())
@@ -56,16 +58,18 @@ public class EnemyShip extends BaseShip {
 
     @Override
     protected void autoFire(float delta) {
-        if (getTop() < worldBounds.getTop() && !makeFirstShoot) {
-            shoot();
-            makeFirstShoot = true;
-        }
         super.autoFire(delta);
     }
 
     @Override
     public void destroy() {
         super.destroy();
-        makeFirstShoot = false;
+    }
+
+    public boolean isBulletCollision(Bullet bullet) {
+        return !(bullet.getRight() < getLeft() ||
+                bullet.getLeft() > getRight() ||
+                bullet.getBottom() > getTop() ||
+                bullet.getTop() < pos.y);
     }
 }
