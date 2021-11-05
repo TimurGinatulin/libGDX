@@ -11,7 +11,7 @@ import ru.ginatulin.sprite.EnemyShip;
 
 public class EnemyEmitter {
     private float generateTimer;
-    private static final float GENERATE_INTERVAL = 0.8f;
+    private static final float GENERATE_INTERVAL = 1.5f;
 
     private static final float ENEMY_SMALL_HEIGHT = 0.1f;
     private static final float ENEMY_SMALL_BULLET_HEIGHT = 0.01f;
