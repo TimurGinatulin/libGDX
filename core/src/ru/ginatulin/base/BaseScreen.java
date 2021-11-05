@@ -123,9 +123,13 @@ public class BaseScreen implements Screen, InputProcessor {
     }
     @Override
     public boolean mouseMoved(int screenX, int screenY) {
+        touch.set(screenX,screenBounds.getHeight() - screenY).mul(screenToWorld);
+        mouseMoved(touch);
         return false;
     }
-
+    public boolean mouseMoved(Vector2 touch) {
+        return false;
+    }
     @Override
     public boolean scrolled(float amountX, float amountY) {
         return false;

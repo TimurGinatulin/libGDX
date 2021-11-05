@@ -146,6 +146,13 @@ public class MainShip extends BaseShip {
     private void stop() {
         v.setZero();
     }
+
+    public void reborn() {
+        this.isMoveRight = false;
+        this.isMoveLeft = false;
+        this.destroyed = false;
+    }
+
     public boolean isBulletCollision(Bullet bullet) {
         return !(bullet.getRight() < getLeft() ||
                 bullet.getLeft() > getRight() ||

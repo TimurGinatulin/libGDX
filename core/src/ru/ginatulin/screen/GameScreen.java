@@ -14,7 +14,9 @@ import ru.ginatulin.pool.ExplosionPool;
 import ru.ginatulin.sprite.Background;
 import ru.ginatulin.sprite.Bullet;
 import ru.ginatulin.sprite.EnemyShip;
+import ru.ginatulin.sprite.GameOverButton;
 import ru.ginatulin.sprite.MainShip;
+import ru.ginatulin.sprite.NewGameButton;
 import ru.ginatulin.sprite.Star;
 import ru.ginatulin.util.EnemyEmitter;
 
@@ -31,6 +33,8 @@ public class GameScreen extends BaseScreen {
     private EnemyPool enemyPool;
     private EnemyEmitter enemyEmitter;
     private Sound explosionSound;
+    private NewGameButton newGameButton;
+    private GameOverButton gameOverButton;
 
     @Override
     public void show() {
@@ -38,11 +42,13 @@ public class GameScreen extends BaseScreen {
         explosionSound = Gdx.audio.newSound(Gdx.files.internal("sounds/explosion.wav"));
         background = new Background(bg);
         atlas = new TextureAtlas("textures/mainAtlas.tpack");
+        gameOverButton = new GameOverButton(atlas);
         explosionPool = new ExplosionPool(atlas, explosionSound);
         stars = new Star[STAR_COUNT];
         bulletPool = new BulletPool();
         enemyPool = new EnemyPool(bulletPool, worldBounds, explosionPool);
         mainShip = new MainShip(atlas, bulletPool, explosionPool);
+        newGameButton = new NewGameButton(atlas, this);
         for (int i = 0; i < STAR_COUNT; i++) {
             stars[i] = new Star(atlas);
         }
@@ -59,11 +65,10 @@ public class GameScreen extends BaseScreen {
     }
 
     private void update(float delta) {
-
         for (int i = 0; i < STAR_COUNT; i++) {
             stars[i].update(delta);
         }
-        if (!mainShip.isDestroyed()){
+        if (!mainShip.isDestroyed()) {
             mainShip.update(delta);
             bulletPool.updateActiveObject(delta);
 
@@ -71,6 +76,8 @@ public class GameScreen extends BaseScreen {
             enemyEmitter.generate(delta);
         }
         explosionPool.updateActiveObject(delta);
+        newGameButton.update(delta);
+        gameOverButton.update(delta);
         collisionDestroyed();
     }
 
@@ -123,9 +130,13 @@ public class GameScreen extends BaseScreen {
             bulletPool.drawActiveObject(batch);
             enemyPool.drawActiveObject(batch);
             mainShip.draw(batch);
+        } else {
+            gameOverButton.setActive(true);
+            newGameButton.setActive(true);
         }
         explosionPool.drawActiveObject(batch);
-
+        newGameButton.draw(batch);
+        gameOverButton.draw(batch);
         batch.end();
     }
 
@@ -133,6 +144,8 @@ public class GameScreen extends BaseScreen {
     public void resize(Rect worldBounds) {
         background.resize(worldBounds);
         mainShip.resize(worldBounds);
+        newGameButton.resize(worldBounds);
+        gameOverButton.resize(worldBounds);
         for (int i = 0; i < STAR_COUNT; i++) {
             stars[i].resize(worldBounds);
         }
@@ -153,12 +166,16 @@ public class GameScreen extends BaseScreen {
     @Override
     public boolean touchDown(Vector2 touch, int pointer, int button) {
         mainShip.touchDown(touch, pointer, button);
+        gameOverButton.touchDown(touch, pointer, button);
+        newGameButton.touchDown(touch, pointer, button);
         return super.touchDown(touch, pointer, button);
     }
 
     @Override
     public boolean touchUp(Vector2 touch, int pointer, int button) {
         mainShip.touchUp(touch, pointer, button);
+        gameOverButton.touchUp(touch, pointer, button);
+        newGameButton.touchUp(touch, pointer, button);
         return super.touchUp(touch, pointer, button);
     }
 
@@ -172,5 +189,22 @@ public class GameScreen extends BaseScreen {
     public boolean keyUp(int keycode) {
         mainShip.keyUp(keycode);
         return super.keyUp(keycode);
+    }
+
+    @Override
+    public boolean mouseMoved(Vector2 touch) {
+        gameOverButton.mouseMoved(touch);
+        newGameButton.mouseMoved(touch);
+        return super.mouseMoved(touch);
+    }
+
+    public void rePlay() {
+        bulletPool.dispose();
+        enemyPool.dispose();
+        explosionPool.dispose();
+        gameOverButton.setActive(false);
+        newGameButton.setActive(false);
+        mainShip.pos.x = 0.0f;
+        mainShip.reborn();
     }
 }
