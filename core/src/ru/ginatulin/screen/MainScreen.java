@@ -12,6 +12,7 @@ import ru.ginatulin.base.BaseScreen;
 import ru.ginatulin.math.Rect;
 import ru.ginatulin.sprite.Background;
 import ru.ginatulin.sprite.ExitButton;
+import ru.ginatulin.sprite.NewGameButton;
 import ru.ginatulin.sprite.PlayButton;
 import ru.ginatulin.sprite.Star;
 
@@ -100,7 +101,7 @@ public class MainScreen extends BaseScreen {
     @Override
     public boolean touchUp(Vector2 touch, int pointer, int button) {
         exitButton.touchUp(touch, pointer, button);
-        playButton.touchUp(touch, pointer, button );
+        playButton.touchUp(touch, pointer, button);
         return false;
     }
 }
