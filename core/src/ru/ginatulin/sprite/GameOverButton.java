@@ -59,7 +59,7 @@ public class GameOverButton extends BaseButton {
     @Override
     public void resize(Rect worldBounds) {
         setHeightProportion(BUTTON_HEIGHT);
-        setBottom(PADDING);
+        setBottom(worldBounds.getHalfHeight()/2 + PADDING);
     }
 
     public boolean mouseMoved(Vector2 touch) {

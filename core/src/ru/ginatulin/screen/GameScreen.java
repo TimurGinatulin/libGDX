@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Align;
 
@@ -13,14 +14,17 @@ import ru.ginatulin.math.Rect;
 import ru.ginatulin.pool.BulletPool;
 import ru.ginatulin.pool.EnemyPool;
 import ru.ginatulin.pool.ExplosionPool;
+import ru.ginatulin.pool.KitPool;
 import ru.ginatulin.sprite.Background;
 import ru.ginatulin.sprite.Bullet;
 import ru.ginatulin.sprite.EnemyShip;
 import ru.ginatulin.sprite.GameOverButton;
+import ru.ginatulin.sprite.Kit;
 import ru.ginatulin.sprite.MainShip;
 import ru.ginatulin.sprite.NewGameButton;
 import ru.ginatulin.sprite.Star;
 import ru.ginatulin.util.EnemyEmitter;
+import ru.ginatulin.util.KitEmitter;
 
 public class GameScreen extends BaseScreen {
     private int frags = 0;
@@ -34,14 +38,17 @@ public class GameScreen extends BaseScreen {
     private TextureAtlas atlas;
     private Background background;
     private Texture bg;
+    private TextureRegion kit;
     private Star[] stars;
     private MainShip mainShip;
     private BulletPool bulletPool;
     private EnemyPool enemyPool;
     private EnemyEmitter enemyEmitter;
+    private KitEmitter kitEmitter;
     private Sound explosionSound;
     private NewGameButton newGameButton;
     private GameOverButton gameOverButton;
+    private KitPool kitPool;
 
     private Font font;
     private StringBuilder sbFrags;
@@ -50,6 +57,9 @@ public class GameScreen extends BaseScreen {
 
     @Override
     public void show() {
+        kit = new TextureRegion();
+        kit.setRegion(new Texture("textures/merg.png"));
+
         sbFrags = new StringBuilder();
         sbHp = new StringBuilder();
         sbLevel = new StringBuilder();
@@ -69,6 +79,8 @@ public class GameScreen extends BaseScreen {
         }
         enemyEmitter = new EnemyEmitter(enemyPool, atlas, worldBounds);
         font = new Font("font/font.fnt", "font/font.png");
+        kitPool= new KitPool(kit,worldBounds);
+        kitEmitter = new KitEmitter(kitPool,worldBounds);
         font.setSize(FONT_SIZE);
         super.show();
     }
@@ -88,9 +100,10 @@ public class GameScreen extends BaseScreen {
         if (!mainShip.isDestroyed()) {
             mainShip.update(delta);
             bulletPool.updateActiveObject(delta);
-
+            kitPool.updateActiveObject(delta);
             enemyPool.updateActiveObject(delta);
-            enemyEmitter.generate(delta,frags);
+            enemyEmitter.generate(delta, frags);
+            kitEmitter.generate(delta);
         }
         explosionPool.updateActiveObject(delta);
         newGameButton.update(delta);
@@ -107,6 +120,10 @@ public class GameScreen extends BaseScreen {
                 enemyShip.destroy();
                 mainShip.damage(enemyShip.getDamage());
             }
+        }
+        for (Kit kit : kitPool.getActiveObject()){
+            if (mainShip.isBulletCollision(kit))
+                mainShip.damage(kit.getDamage());
         }
         for (Bullet bullet : bulletPool.getActiveObject()) {
 
@@ -134,6 +151,7 @@ public class GameScreen extends BaseScreen {
         bulletPool.freeAllDestroyed();
         enemyPool.freeAllDestroyed();
         explosionPool.freeAllDestroyed();
+        kitPool.freeAllDestroyed();
     }
 
     private void draw() {
@@ -145,6 +163,7 @@ public class GameScreen extends BaseScreen {
         if (!mainShip.isDestroyed()) {
             bulletPool.drawActiveObject(batch);
             enemyPool.drawActiveObject(batch);
+            kitPool.drawActiveObject(batch);
             mainShip.draw(batch);
         } else {
             gameOverButton.setActive(true);
@@ -163,10 +182,10 @@ public class GameScreen extends BaseScreen {
                 worldBounds.getLeft() + MARGIN, worldBounds.getTop() - MARGIN);
         sbHp.setLength(0);
         font.draw(batch, sbHp.append(HP).append(mainShip.getHP()),
-                 worldBounds.pos.x,worldBounds.getTop() - MARGIN, Align.center);
+                worldBounds.pos.x, worldBounds.getTop() - MARGIN, Align.center);
         sbLevel.setLength(0);
         font.draw(batch, sbLevel.append(LEVEL).append(enemyEmitter.getLevel()),
-                worldBounds.getRight() - MARGIN, worldBounds.getTop() - MARGIN,Align.topRight);
+                worldBounds.getRight() - MARGIN, worldBounds.getTop() - MARGIN, Align.topRight);
     }
 
     @Override
@@ -232,6 +251,7 @@ public class GameScreen extends BaseScreen {
         bulletPool.dispose();
         enemyPool.dispose();
         explosionPool.dispose();
+        kitPool.dispose();
         gameOverButton.setActive(false);
         newGameButton.setActive(false);
         mainShip.pos.x = 0.0f;
