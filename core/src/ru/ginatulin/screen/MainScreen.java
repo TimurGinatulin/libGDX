@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 
 import ru.ginatulin.base.BaseScreen;
+import ru.ginatulin.base.Font;
 import ru.ginatulin.math.Rect;
 import ru.ginatulin.sprite.Background;
 import ru.ginatulin.sprite.ExitButton;

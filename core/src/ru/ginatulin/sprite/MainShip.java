@@ -31,7 +31,7 @@ public class MainShip extends BaseShip {
         this.reloadInterval = RELOAD_INTERVAL;
         this.bulletHeight = 0.01f;
         this.bulletDamage = 1;
-        this.hp = 1;
+        this.hp = 100;
     }
 
     public Integer getHP() {
