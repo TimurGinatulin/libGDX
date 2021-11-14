@@ -51,6 +51,8 @@ public class EnemyEmitter {
 
     private final Rect worldBounds;
 
+    private int level;
+
     public EnemyEmitter(EnemyPool enemyPool, TextureAtlas atlas, Rect worldBounds) {
         this.enemyPool = enemyPool;
         enemySmallRegions = Regions.split(atlas.findRegion("enemy0"), 1, 2, 2);
@@ -60,7 +62,8 @@ public class EnemyEmitter {
         this.worldBounds = worldBounds;
     }
 
-    public void generate(float delta) {
+    public void generate(float delta,int frags) {
+        level = frags/10 +1;
         generateTimer += delta;
         if (generateTimer >= GENERATE_INTERVAL) {
             generateTimer = 0f;
@@ -73,7 +76,7 @@ public class EnemyEmitter {
                         bulletRegion,
                         ENEMY_SMALL_BULLET_HEIGHT,
                         enemySmallBulletV,
-                        ENEMY_SMALL_BULLET_DAMAGE,
+                        ENEMY_SMALL_BULLET_DAMAGE * level,
                         ENEMY_SMALL_HP,
                         ENEMY_SMALL_RELOAD_INTERVAL,
                         ENEMY_SMALL_HEIGHT
@@ -107,5 +110,9 @@ public class EnemyEmitter {
                     worldBounds.getRight() - enemyShip.getHalfWidth());
             enemyShip.setBottom(worldBounds.getTop());
         }
+    }
+
+    public int getLevel() {
+        return level;
     }
 }
