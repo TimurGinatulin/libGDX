@@ -14,6 +14,7 @@ public class MainShip extends BaseShip {
     private final float BOTTOM_MARGIN = 0.05f;
     private final float RELOAD_INTERVAL = 0.3f;
     private final int INVALID_POINTER = -1;
+    private final int MAX_HP_LEVEL = 1;
     private boolean isMoveRight = false;
     private boolean isMoveLeft = false;
     private int leftPointer = INVALID_POINTER;
@@ -31,7 +32,7 @@ public class MainShip extends BaseShip {
         this.reloadInterval = RELOAD_INTERVAL;
         this.bulletHeight = 0.01f;
         this.bulletDamage = 1;
-        this.hp = 100;
+        this.hp = MAX_HP_LEVEL;
     }
 
     public Integer getHP() {
@@ -148,12 +149,13 @@ public class MainShip extends BaseShip {
     }
 
     public void reborn() {
+        this.hp = MAX_HP_LEVEL;
         this.isMoveRight = false;
         this.isMoveLeft = false;
         this.destroyed = false;
     }
 
-    public boolean isBulletCollision(Bullet bullet) {
+    public boolean isBulletCollision(Rect bullet) {
         return !(bullet.getRight() < getLeft() ||
                 bullet.getLeft() > getRight() ||
                 bullet.getBottom() > pos.y ||

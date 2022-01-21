@@ -75,6 +75,6 @@ public class NewGameButton extends BaseButton {
     @Override
     public void resize(Rect worldBounds) {
         setHeightProportion(BUTTON_HEIGHT);
-        setTop(-PADDING);
+        setTop(worldBounds.getHalfHeight()/2-PADDING);
     }
 }

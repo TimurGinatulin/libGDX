@@ -90,6 +90,6 @@ public class BaseShip extends Sprite {
 
     private void boom() {
         Explosion explosion = explosionPool.obtain();
-        explosion.set(this.pos,getHeight());
+        explosion.set(this.pos, getHeight());
     }
 }
